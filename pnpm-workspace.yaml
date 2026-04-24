@@ -1,0 +1,7 @@
+packages:
+  - packages/*
+  - playground/*
+
+allowBuilds:
+  electron: true
+  esbuild: true

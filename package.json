@@ -1,0 +1,11 @@
+{
+  "name": "rulect-root",
+  "private": true,
+  "packageManager": "pnpm@10.33.0",
+  "scripts": {
+    "dev": "pnpm -r --parallel --stream dev",
+    "dev:vite": "pnpm -F vite dev",
+    "play:vite": "pnpm -F play-vite dev",
+    "build": "pnpm -r --parallel --stream build"
+  }
+}

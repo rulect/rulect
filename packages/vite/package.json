@@ -1,0 +1,47 @@
+{
+  "name": "@rulect/vite",
+  "description": "Vite plugin integration for Rulect development workflow",
+  "version": "0.1.0",
+  "license": "MIT",
+  "type": "module",
+  "packageManager": "pnpm@10.33.0",
+  "files": [
+    "dist"
+  ],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "scripts": {
+    "dev": "tsup --watch",
+    "clean": "rimraf dist",
+    "build": "tsup",
+    "prepublishOnly": "pnpm build"
+  },
+  "devDependencies": {
+    "@types/node": "^24.12.2",
+    "chalk": "^5.6.2",
+    "esbuild": "^0.28.0",
+    "rimraf": "^6.1.3",
+    "tsup": "^8.3.5",
+    "typescript": "^6.0.2"
+  },
+  "peerDependencies": {
+    "electron": ">=40.0.0",
+    "vite": ">=7.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rulect/rulect.git",
+    "directory": "packages/vite"
+  },
+  "homepage": "https://github.com/rulect/rulect/tree/main/packages/vite",
+  "bugs": {
+    "url": "https://github.com/rulect/rulect/issues"
+  }
+}
