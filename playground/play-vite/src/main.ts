@@ -3,6 +3,7 @@ import typescriptLogo from "./assets/typescript.svg";
 import viteLogo from "./assets/vite.svg";
 import heroImg from "./assets/hero.png";
 import { setupCounter } from "./counter.ts";
+import { setupIpcTest } from "./ipc-test.ts";
 
 document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
 <section id="center">
@@ -16,6 +17,8 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
     <p>Edit <code>src/main.ts</code> and save to test <code>HMR</code></p>
   </div>
   <button id="counter" type="button" class="counter"></button>
+  <hr/>
+  <div id="ipc"></div>
 </section>
 
 <div class="ticks"></div>
@@ -58,3 +61,4 @@ document.querySelector<HTMLDivElement>("#app")!.innerHTML = `
 `;
 
 setupCounter(document.querySelector<HTMLButtonElement>("#counter")!);
+setupIpcTest(document.querySelector<HTMLDivElement>("#ipc")!);

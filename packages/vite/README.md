@@ -2,12 +2,19 @@
 
 Vite integration for Rulect.
 
-It starts the Electron process when the Vite dev server or preview server is ready, bundles native files, and restarts Rulect when native sources change.
+This plugin bootstraps an Electron process when the Vite dev server or preview server is ready, bundles native Rulect sources, and restarts the Electron process when native source files change.
 
 ## Install
 
 ```bash
-pnpm add -D electron @rulect/vite
+# npm
+npm install --save-dev @rulect/vite electron
+
+# pnpm
+pnpm add -D @rulect/vite electron
+
+# yarn
+yarn add -D @rulect/vite electron
 ```
 
 ## Usage
@@ -21,10 +28,17 @@ export default defineConfig({
 });
 ```
 
+## What it does
+
+- Bundles your Electron main and preload scripts from `rulect/entry.ts` or `rulect/entry.js` and `rulect/preload.ts` or `rulect/preload.js`.
+- Produces both ESM and CJS outputs for the native bundle targets.
+- Starts Electron after Vite is ready.
+- Restarts Electron automatically when native sources change.
+- Detects the `rulect` directory at project root or under `src/rulect`.
+
 ## Notes
 
 - Requires `vite >= 7` and `electron >= 40`.
-- Expects a `rulect` directory in your project root.
-- Inside `rulect`, you should have `entry.js` or `entry.ts` for the main process.
-- Inside `rulect`, you should have `preload.js` or `preload.ts` for the preload script.
-- Watches native changes under `src/rulect` and `src/platform`.
+- Expects a `rulect` directory with `entry` and `preload` source files.
+- Uses `esbuild` for native bundling and excludes Electron and built-in Node modules.
+- Watches changes in native Rulect source files and reloads the Electron process accordingly.

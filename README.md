@@ -1,12 +1,12 @@
 # Rulect
 
-Rulect is a toolkit for running Electron apps alongside Vite.
+Rulect is a monorepo toolkit for Electron + Vite development.
 
-This repository currently contains the first Rulect package, with more planned.
+This repository contains packages for integrating Electron into Vite workflows, with additional tooling planned.
 
 ## Packages
 
-- `@rulect/vite` - starts and restarts the Rulect Electron process during Vite development.
+- `@rulect/vite` - Vite plugin that bundles native Electron sources, starts Electron, and restarts the process on native changes.
 - `@rulect/core` - planned
 - `@rulect/cli` - planned
 
@@ -17,8 +17,13 @@ pnpm install
 pnpm dev
 ```
 
-Build the package:
+## Build
 
 ```bash
 pnpm build
 ```
+
+## Notes
+
+- The root README is a monorepo overview.
+- Package-specific usage and installation details are documented in each package README.

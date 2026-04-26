@@ -1,4 +1,4 @@
-import { app, BrowserWindow, screen } from "electron";
+import { app, BrowserWindow, ipcMain, screen, session } from "electron";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -24,8 +24,8 @@ const createWindow = () => {
     show: false,
     webPreferences: {
       sandbox: true,
-      //contextIsolation: true,
-      //nodeIntegration: false,
+      contextIsolation: true,
+      nodeIntegration: false,
       preload: path.join(__dirname, "preload.cjs"),
     },
   });
@@ -42,33 +42,53 @@ const createWindow = () => {
 };
 
 app.whenReady().then(() => {
+  const csp = isDev
+    ? `default-src * data: blob:; script-src * 'unsafe-inline' 'unsafe-eval'; style-src * 'unsafe-inline'; connect-src *; img-src * data:;`
+    : `default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none';`;
+
+  session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
+    callback({ responseHeaders: { ...details.responseHeaders, "Content-Security-Policy": [csp] } });
+  });
+
   createWindow();
+  ///
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
-
-    ///
-    /// debug
-    const _debug = () => {
-      console.log("Rulect Process ID:", process.pid);
-      console.log("IPC status:", typeof process.send);
-
-      /// ipc
-      if (process.send) {
-        console.log("Rulect: IPC connected");
-
-        process.on("message", (message: any) => {
-          console.log("msg:", message);
-          // if (message == "RELOAD_APP") {
-          //   app.relaunch();
-          //   app.exit(0);
-          // }
-        });
-      } else {
-        console.error("Rulect: IPC channel not found! check stdio: 'ipc'");
-      }
-    };
-    _debug();
   });
+  /// debug
+  const _debug = () => {
+    console.log("Rulect Process ID:", process.pid);
+    console.log("IPC status:", typeof process.send);
+    /// ipc
+    if (process.send) {
+      console.log("Rulect: IPC connected");
+
+      process.on("message", (message: any) => {
+        console.log("msg:", message);
+        // if (message == "RELOAD_APP") {
+        //   app.relaunch();
+        //   app.exit(0);
+        // }
+      });
+    } else {
+      console.error("Rulect: IPC channel not found! check stdio: 'ipc'");
+    }
+  };
+  _debug();
+
+  const IPCInıt = () => {
+    ipcMain.on("win:minimize", () => win?.minimize());
+    ipcMain.on("win:maximize", () => (win?.isMaximized() ? win.unmaximize() : win?.maximize()));
+    ipcMain.on("win:close", () => win?.close());
+
+    /// invoke
+    ipcMain.handle("ping", () => {
+      console.log("pong");
+      return "pong";
+    });
+  };
+
+  IPCInıt();
 });
 
 app.on("window-all-closed", () => {

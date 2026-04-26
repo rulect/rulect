@@ -9,8 +9,7 @@ export default defineConfig((options) => {
     format: ["esm", "cjs"],
     outDir: "dist",
     platform: "node",
-    target: "node20",
-    external: ["vite"],
+    external: ["vite", "esbuild", "electron"],
     ///
     dts: {
       compilerOptions: {
@@ -20,7 +19,7 @@ export default defineConfig((options) => {
     splitting: false,
     shims: true,
     clean: true,
-    //skipNodeModulesBundle: true,
+    skipNodeModulesBundle: true,
     minify: !isDev,
     sourcemap: isDev,
     treeshake: true,
