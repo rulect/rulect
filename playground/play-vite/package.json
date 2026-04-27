@@ -6,13 +6,15 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "release": "electron-builder --config builder.config.ts"
   },
   "devDependencies": {
+    "@rulect/vite": "workspace:*",
     "@types/node": "^25.6.0",
     "electron": "^41.3.0",
+    "electron-builder": "^26.8.1",
     "typescript": "~6.0.2",
-    "vite": "^8.0.10",
-    "@rulect/vite": "workspace:*"
+    "vite": "^8.0.10"
   }
 }

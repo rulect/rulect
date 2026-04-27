@@ -14,3 +14,15 @@ export const getRulectDir = () => {
 
   return null;
 };
+
+export const resolveRulectEntry = (rulectDir: string, name: string) => {
+  const candidates = [join(rulectDir, `${name}.ts`), join(rulectDir, `${name}.js`)];
+
+  for (const candidate of candidates) {
+    if (existsSync(candidate)) {
+      return candidate;
+    }
+  }
+
+  throw new Error(`Rulect could not find "${name}.ts" or "${name}.js" in ${rulectDir}.`);
+};

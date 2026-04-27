@@ -1,6 +1,6 @@
 import path from "node:path";
 import { builtinModules } from "node:module";
-import { build as esbuild, type BuildOptions } from "esbuild";
+import { build as viteBuild, type InlineConfig } from "vite";
 import { useRulectStore } from "./state";
 
 export async function bundleNative() {
@@ -8,41 +8,37 @@ export async function bundleNative() {
 
   const isDev = store.get("isDev");
   const outDir = path.join(store.get("outDir"), "rulect");
-  ///
   const external = ["electron", "sqlite3", "serialport", ...builtinModules];
-  const commonOptions: BuildOptions = {
-    bundle: true,
-    platform: "node",
-    target: "node20",
-    external,
-    sourcemap: isDev,
-    minify: !isDev,
-  };
+
+  const buildConfig = (entry: string, format: "es" | "cjs", outFile: string): InlineConfig => ({
+    root: store.get("rootDir"),
+    configFile: false,
+    logLevel: "error",
+    publicDir: false,
+
+    build: {
+      ssr: entry,
+      target: "node20",
+      outDir,
+      emptyOutDir: false,
+      sourcemap: isDev,
+      minify: !isDev,
+      rollupOptions: {
+        input: entry,
+        external,
+        output: {
+          format,
+          entryFileNames: outFile,
+          exports: "auto",
+        },
+      },
+    },
+  });
 
   await Promise.all([
-    esbuild({
-      ...commonOptions,
-      entryPoints: [store.get("entryFile")],
-      format: "esm",
-      outfile: path.join(outDir, "entry.js"),
-    }),
-    esbuild({
-      ...commonOptions,
-      entryPoints: [store.get("entryFile")],
-      format: "cjs",
-      outfile: path.join(outDir, "entry.cjs"),
-    }),
-    esbuild({
-      ...commonOptions,
-      entryPoints: [store.get("preloadFile")],
-      format: "esm",
-      outfile: path.join(outDir, "preload.js"),
-    }),
-    esbuild({
-      ...commonOptions,
-      entryPoints: [store.get("preloadFile")],
-      format: "cjs",
-      outfile: path.join(outDir, "preload.cjs"),
-    }),
+    viteBuild(buildConfig(store.get("applicationFile"), "es", "application.js")),
+    viteBuild(buildConfig(store.get("applicationFile"), "cjs", "application.cjs")),
+    viteBuild(buildConfig(store.get("apiFile"), "es", "api.js")),
+    viteBuild(buildConfig(store.get("apiFile"), "cjs", "api.cjs")),
   ]);
 }

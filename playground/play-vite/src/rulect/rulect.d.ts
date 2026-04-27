@@ -1,4 +1,4 @@
-import type { RulectApi } from "./preload";
+import type { RulectApi } from "./api";
 
 declare global {
   interface Window {

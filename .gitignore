@@ -41,6 +41,8 @@ generated/
 .generated/
 .medusa
 .rulect/
+.release/
+release/
 
 # Logs / Debug
 # =====================

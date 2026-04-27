@@ -1,4 +1,4 @@
-import type { RulectApi } from "./preload";
+import type { RulectApi } from "./api";
 
 export function getRulect(): RulectApi | undefined {
   return window.rulect;
@@ -7,7 +7,7 @@ export function getRulect(): RulectApi | undefined {
 export function assertRulect(): RulectApi {
   const rulect = getRulect();
   if (!rulect) {
-    throw new Error("window.rulect is not available. Make sure the preload script exposed it.");
+    throw new Error("window.rulect is not available. Make sure the api script exposed it.");
   }
   return rulect;
 }

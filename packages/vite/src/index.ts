@@ -59,12 +59,18 @@ export default function rulectPlugin(): Plugin {
       attachServerLifecycle(server, "preview");
     },
 
-    async handleHotUpdate({ file }) {
-      const isNativeChange = file.includes("src/rulect") || file.includes("src/platform");
+    /**
+     * @see https://vite.dev/guide/api-plugin#handlehotupdate
+     */
+    async handleHotUpdate({ file, server }) {
+      const rootDir = server.config.root;
+      const relativePath = path.relative(rootDir, file);
+      const isNativeChange = relativePath.startsWith(`rulect${path.sep}`) || relativePath.startsWith(`src${path.sep}rulect${path.sep}`);
+      /// debug
+      /// console.log({ file, rootDir, relativePath, isNativeChange });
 
       if (isNativeChange) {
-        log.info(`Native change detected: ${path.basename(file)}`);
-        log.info("Re-bundling native source...");
+        log.info(`Re-bundling ${path.basename(file)}`);
         await bootRulect();
         return [];
       }
@@ -74,28 +80,29 @@ export default function rulectPlugin(): Plugin {
     configResolved(config) {
       store.set({
         rootDir: config.root,
-        outDir: path.resolve(config.root, config.build.outDir),
+        outDir: config.build.outDir,
       });
     },
 
-    config(_, { command }) {
-      // if (command === "serve") {
-      //   return {
-      //     optimizeDeps: {
-      //       exclude: ["electron"],
-      //     },
-      //     build: {
-      //       sourcemap: true,
-      //       outDir: ".rulect",
-      //       emptyOutDir: true,
-      //     },
-      //   };
-      // }
+    config(config, { command }) {
+      config.base = config.base || "./";
+      if (command === "build") {
+        /// ..
+      }
+    },
+
+    async writeBundle(server) {
+      log.info("Bundling native process...");
+      try {
+        await bundleNative();
+        log.success(`Native process bundled to ${store.get("outDir")}/rulect`);
+      } catch (e) {
+        log.error("Native bundle failed!");
+      }
     },
 
     async closeBundle() {
       stopRunningRulect();
-      await bundleNative();
     },
   };
 }

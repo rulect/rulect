@@ -32,8 +32,8 @@ export async function spawnRulect() {
     ELECTRON_NO_ASAR: "1",
   };
 
-  const entryPath = path.join(store.get("outDir"), "rulect/entry.js");
-  const rulectProcess = spawn(store.get("startPath"), [entryPath], {
+  const applicationPath = path.join(store.get("outDir"), "rulect/application.js");
+  const rulectProcess = spawn(store.get("startPath"), [applicationPath], {
     env,
     stdio: ["inherit", "inherit", "inherit", "ipc"],
     shell: false,

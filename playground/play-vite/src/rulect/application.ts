@@ -26,7 +26,7 @@ const createWindow = () => {
       sandbox: true,
       contextIsolation: true,
       nodeIntegration: false,
-      preload: path.join(__dirname, "preload.cjs"),
+      preload: path.join(__dirname, "api.cjs"),
     },
   });
 
@@ -42,6 +42,12 @@ const createWindow = () => {
 };
 
 app.whenReady().then(() => {
+  createWindow();
+  ///
+  app.on("activate", () => {
+    if (BrowserWindow.getAllWindows().length === 0) createWindow();
+  });
+
   const csp = isDev
     ? `default-src * data: blob:; script-src * 'unsafe-inline' 'unsafe-eval'; style-src * 'unsafe-inline'; connect-src *; img-src * data:;`
     : `default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none';`;
@@ -50,11 +56,6 @@ app.whenReady().then(() => {
     callback({ responseHeaders: { ...details.responseHeaders, "Content-Security-Policy": [csp] } });
   });
 
-  createWindow();
-  ///
-  app.on("activate", () => {
-    if (BrowserWindow.getAllWindows().length === 0) createWindow();
-  });
   /// debug
   const _debug = () => {
     console.log("Rulect Process ID:", process.pid);
