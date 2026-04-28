@@ -4,6 +4,8 @@
   "packageManager": "pnpm@10.33.0",
   "scripts": {
     "dev": "pnpm -r --parallel --stream dev",
+    "dev:packs": "pnpm -r --parallel --stream --filter \"./packages/*\" dev",
+    "dev:core": "pnpm -F core dev",
     "dev:vite": "pnpm -F vite dev",
     "play:vite": "pnpm -F play-vite dev",
     "build": "pnpm -r --parallel --stream build"

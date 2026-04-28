@@ -1,0 +1,46 @@
+{
+  "name": "rulect",
+  "version": "0.0.1",
+  "private": "true",
+  "packageManager": "pnpm@10.33.0",
+  "description": "Core runtime primitives for Rulect Electron applications",
+  "license": "MIT",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "scripts": {
+    "dev": "tsup --watch",
+    "clean": "rimraf dist",
+    "build": "tsup",
+    "prepublishOnly": "pnpm build"
+  },
+  "devDependencies": {
+    "@types/node": "^25.6.0",
+    "chalk": "^5.6.2",
+    "rimraf": "^6.1.3",
+    "tsup": "^8.5.1",
+    "typescript": "^6.0.3"
+  },
+  "peerDependencies": {
+    "electron": ">=40.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rulect/rulect.git",
+    "directory": "packages/core"
+  },
+  "homepage": "https://github.com/rulect/rulect/tree/main/packages/rulect",
+  "bugs": {
+    "url": "https://github.com/rulect/rulect/issues"
+  }
+}

@@ -7,11 +7,19 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "release": "electron-builder --config builder.config.ts"
+    "release": "vite build && electron-builder --config builder.config.ts"
+  },
+  "dependencies": {
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5"
   },
   "devDependencies": {
+    "rulect": "workspace:*",
     "@rulect/vite": "workspace:*",
-    "@types/node": "^25.6.0",
+    "@types/node": "^24.12.2",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
     "electron": "^41.3.0",
     "electron-builder": "^26.8.1",
     "typescript": "~6.0.2",

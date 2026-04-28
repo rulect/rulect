@@ -1,18 +1,19 @@
 {
   "compilerOptions": {
     "target": "es2023",
-    "module": "esnext",
     "lib": ["ES2023", "DOM"],
+    "module": "esnext",
     "types": ["vite/client", "node"],
     "skipLibCheck": true,
     "strict": true,
-    "esModuleInterop": true,
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
     "moduleDetection": "force",
-    "noEmit": true
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "erasableSyntaxOnly": true
   },
-  "include": ["src/**/*"],
+  "include": ["src", "vite.config.ts"],
   "exclude": ["node_modules", "dist"]
 }

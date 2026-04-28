@@ -1,13 +1,8 @@
-/**
- ** @see https://www.electron.build/
- **
- */
 import type { Configuration } from "electron-builder";
 
 const config: Configuration = {
-  appId: "com.rulect.app",
-  productName: "Rulect App",
-  copyright: "Copyright © 2026 Rulect",
+  appId: "com.rulect.playreact",
+  productName: "Rulect React",
   directories: {
     output: "release",
     buildResources: "public",
@@ -25,11 +20,9 @@ const config: Configuration = {
     oneClick: false,
     allowToChangeInstallationDirectory: true,
     createDesktopShortcut: "always",
-    runAfterFinish: true,
     createStartMenuShortcut: true,
+    runAfterFinish: true,
     deleteAppDataOnUninstall: true,
-    displayLanguageSelector: true,
-    // installerSidebar: "public/installer-sidebar.bmp",
   },
 };
 
