@@ -5,6 +5,7 @@ export default defineConfig((options) => {
   return {
     entry: {
       index: "src/index.ts",
+      preload: "src/preload.ts",
     },
     format: ["esm", "cjs"],
     outDir: "dist",

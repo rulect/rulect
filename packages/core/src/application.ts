@@ -1,9 +1,10 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import type { App, BrowserWindowConstructorOptions, OnHeadersReceivedListenerDetails, OpenDevToolsOptions, WebPreferences } from "electron";
-import { app, BrowserWindow, screen, session } from "electron";
+import { app, BrowserWindow, ipcMain, screen, session } from "electron";
 import { log } from "./logger";
 import { isUrl } from "./utils";
+import ActionManager from "./action-manager";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const defaultContentSecurityPolicy = {
@@ -33,12 +34,16 @@ export class Rulect {
   private readonly electronApp: App = app;
   private readonly defaultOptions: BrowserWindowConstructorOptions;
   private readonly userOptions: RulectOptions;
+  private readonly actionManager: ActionManager;
 
   constructor(options: RulectOptions = {}) {
+    this.actionManager = new ActionManager();
+
+    ///
     this.defaultOptions = {
       show: false,
       webPreferences: {
-        preload: path.join(__dirname, "api.cjs"),
+        preload: path.join(__dirname, "preload.js"),
         sandbox: true,
         contextIsolation: true,
         nodeIntegration: false,
@@ -49,31 +54,41 @@ export class Rulect {
 
     return new Proxy(this, {
       get: (target, prop, receiver) => {
-        if (prop in target) {
-          return Reflect.get(target, prop, receiver);
+        if (Reflect.has(target, prop)) {
+          const value = Reflect.get(target, prop, receiver);
+          if (value !== undefined) return value;
         }
-
-        const value = Reflect.get(target.electronApp as object, prop, target.electronApp);
-        return typeof value === "function" ? value.bind(target.electronApp) : value;
+        if (prop in target.electronApp) {
+          const value = Reflect.get(target.electronApp, prop, target.electronApp);
+          return typeof value === "function" ? value.bind(target.electronApp) : value;
+        }
+        return undefined;
       },
     });
   }
 
+  expose(name: string, cb: Function) {
+    this.actionManager.expose(name, cb);
+  }
+
   private initLifecycle() {
     this.electronApp.whenReady().then(() => {
+      ///
+      ipcMain.handle("rulect-action-invoke", (event, data) => {
+        return this.actionManager.handleInvoke(event, data);
+      });
+      ///
       this.applyContentSecurityPolicy();
-
-      if (!this.window) {
-        void this.createWindow();
-      }
+      ///
+      if (!this.window) void this.createWindow();
     });
-
+    ///
     this.electronApp.on("activate", () => {
       if (BrowserWindow.getAllWindows().length === 0) {
         void this.createWindow();
       }
     });
-
+    ///
     this.electronApp.on("window-all-closed", () => {
       if (process.platform !== "darwin") {
         this.electronApp.quit();
@@ -176,16 +191,14 @@ export class Rulect {
     }
 
     if (csp === "defaults") {
-      return this.electronApp.isPackaged
-        ? defaultContentSecurityPolicy.prod
-        : defaultContentSecurityPolicy.dev;
+      return this.electronApp.isPackaged ? defaultContentSecurityPolicy.prod : defaultContentSecurityPolicy.dev;
     }
 
     if (typeof csp === "string") {
       return csp;
     }
 
-    return this.electronApp.isPackaged ? csp.prod ?? null : csp.dev ?? csp.prod ?? null;
+    return this.electronApp.isPackaged ? (csp.prod ?? null) : (csp.dev ?? csp.prod ?? null);
   }
 
   private resolveLoadTarget() {
@@ -201,9 +214,7 @@ export class Rulect {
       return load;
     }
 
-    return this.electronApp.isPackaged
-      ? load.prod ?? prodFile
-      : load.dev ?? devServer ?? load.prod ?? prodFile;
+    return this.electronApp.isPackaged ? (load.prod ?? prodFile) : (load.dev ?? devServer ?? load.prod ?? prodFile);
   }
 }
 

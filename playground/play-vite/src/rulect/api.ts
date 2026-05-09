@@ -1,12 +1,11 @@
-import { contextBridge, ipcRenderer } from "electron";
+import { invokeRulectAction } from "./client";
 
-const rulectApi = {
-  minimize: () => ipcRenderer.send("win:minimize"),
-  maximize: () => ipcRenderer.send("win:maximize"),
-  close: () => ipcRenderer.send("win:close"),
-  ping: () => ipcRenderer.invoke("ping"),
-} as const;
+export interface RulectApi {
+  invoke: typeof invokeRulectAction;
+}
 
-export type RulectApi = typeof rulectApi;
-
-contextBridge.exposeInMainWorld("rulect", rulectApi);
+export function useRulectApi(): RulectApi {
+  return {
+    invoke: invokeRulectAction,
+  };
+}

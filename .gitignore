@@ -43,6 +43,7 @@ generated/
 .rulect/
 .release/
 release/
+.claude
 
 # Logs / Debug
 # =====================

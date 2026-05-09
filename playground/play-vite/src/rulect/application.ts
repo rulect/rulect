@@ -1,5 +1,4 @@
-import { ipcMain } from "electron";
-import Rulect from "@rulect/core";
+import Rulect from "rulect";
 
 const app = new Rulect({
   csp: "defaults",
@@ -9,24 +8,6 @@ const app = new Rulect({
 
 const isDev = !app.isPackaged;
 
-app.whenReady().then(() => {
-  ipcMain.on("win:minimize", () => app.window?.minimize());
-  ipcMain.on("win:maximize", () => {
-    const win = app.window;
-    if (!win) {
-      return;
-    }
-
-    if (win.isMaximized()) {
-      win.unmaximize();
-    } else {
-      win.maximize();
-    }
-  });
-  ipcMain.on("win:close", () => app.window?.close());
-  ipcMain.handle("ping", () => "pong");
-
-  if (isDev) {
-    app.openDevTools();
-  }
+app.expose("minimize", () => {
+  app.window?.minimize();
 });
